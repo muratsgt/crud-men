@@ -20,5 +20,61 @@ routers
 klasörlerimizi kuruyoruz
 
 
+serverda express ile serveri calistiriyoruz
+app = express()
+app.listen(port, callback)
+
+database e baglaniyoruz
+mongoose.connect() 
+
+gelen requestleri routera yonlendiriyoruz
+app.use(path, router)
+
+json ayarlarini yapiyoruz
+app.json()
+
+dotenv ayarini yapiyoruz
+require("dotenv").config();
+
+ROUTER in icinde
+Router olusturuyoruz 
+const router = express.Router()
+
+sonra router uzerinden dagitimlari yapiyoruz
+router.use(path, router)
+...
+
+alt routerlara da routingi ayni sekilde yapiyoruz
+controllerlarimizi kullanarak
+
+
+
+MODEL
+modellerimizi olusturuyoruz
+const schema = new mongoose.Schema({})
+sonra modeli tanimliyoruz ve export ediyoruz
+mongoose.model("shemaname", schema),
+
+mongoose database ile iletisime gecerken bu modelleri kullanacak
+
+
+
+Mongoose Model de schematype olarak baska bir model kullanirsak
+const storySchema = new mongoose.Schema({
+    title: String,
+    author : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "author",     // bu sekilde diger modele bagliyoruz, yani Id uzerinden
+    }
+});
+const Story = mongoose.model("Story", storySchema);
+
+
+Mongoose Population
+Findone vb gibi model uzerinden DB den bilgileri cagirirken de,
+Story.findOne({title: "Casino Royale"})
+    .populate("author")
+diyerek author bilgilerini de querye eklemis oluyoruz
+
 
 
