@@ -16,14 +16,12 @@ const schema = new Schema({
     unitPrice: {
         type: Number,
         default: 0,
+        min: 0,
     },
     quantity: {
         type: Number,
         default: 0,
-    },
-    categoryId: {
-        type: String,
-        default: "other"
+        min: 0,
     },
     dateCreated: {
         type: Date,
@@ -37,7 +35,7 @@ const schema = new Schema({
     },
     category: {
         type: Schema.Types.ObjectId,
-        ref: "Category"
+        ref: "Category",
     },
     status: {
         type: String,
