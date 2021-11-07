@@ -9,7 +9,7 @@ exports.categoryValidation = [
 
 exports.productValidation = [
     check("title", "Title could be min 2 max 100 chars")
-        .isLength({ min: 2, max: 100 }),
+        .isLength({ min: 2, max: 200 }),
     check("description", "Description could be max 5000 chars")
         .isLength({ max: 5000 }),
 ]

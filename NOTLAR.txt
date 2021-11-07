@@ -21,7 +21,7 @@ klasörlerimizi kuruyoruz
 
 
 serverda express ile serveri calistiriyoruz
-app = express()
+const app = express()
 app.listen(port, callback)
 
 database e baglaniyoruz

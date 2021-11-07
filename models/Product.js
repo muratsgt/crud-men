@@ -4,10 +4,13 @@ const {Schema} = mongoose;
 const schema = new Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        minlength: 2,
+        maxlength: 200
     },
     description: {
         type: String,
+        maxlength: 5000,
     },
     imageUrl: {
         type: String,
