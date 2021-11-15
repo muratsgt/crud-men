@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const defaultSchemaProps = require("../helper/defaultSchemaProps");
 
 const schema = new mongoose.Schema({
     title: {
@@ -6,23 +7,10 @@ const schema = new mongoose.Schema({
         unique: true,
         required: true,
     },
-    status: {
-        type: String,
-        default: "created",
-    },
     description: {
         type: String,
     },
-    dateCreated: {
-        type: Date,
-        default: Date.now,
-    },
-    dateUpdated: {
-        type: Date,
-    },
-    dateDeleted: {
-        type: Date,
-    }
+    ...defaultSchemaProps
 });
 
 module.exports = Category = mongoose.model("Category", schema);

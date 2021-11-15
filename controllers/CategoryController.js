@@ -1,15 +1,13 @@
 const Category = require("../models/Category");
 const validator = require("express-validator");
-
+const errorMessage = require("../helper/errorMessage");
 
 exports.getCategory = async (req, res) => {
     try {
         const category = await Category.findById(req.params.id);
         res.status(200).json(category);
     } catch (error) {
-        return res
-            .status(400)
-            .json({ errors: [error] });
+        return errorMessage(res, error, 400);
     };
 }
 
@@ -18,30 +16,24 @@ exports.getAllCategories = async (req, res) => {
         const categories = await Category.find({ status: { $ne: "deleted" } }); //.select("-status");
         res.status(200).json(categories);
     } catch (error) {
-        return res
-            .status(400)
-            .json({ errors: error });
+        return errorMessage(res, error);
     };
 }
 
 exports.addCategory = async (req, res) => {
     try {
-        const { title, status, dateCreated, description } = req.body;
+        const { title, status, description } = req.body;
 
         // field validation
         const validationErr = validator.validationResult(req);
-        if (validationErr?.errors?.length > 0) {
-            return res
-                .status(400)
-                .json(validationErr);
+        if (validationErr?.errors?.length) {
+            return errorMessage(res, validationErr.errors, 400)
         };
 
         // check if exists
         const categoryExists = await Category.exists({ title: title });
         if (categoryExists) {
-            return res
-                .status(400)
-                .json({ errors: [{ message: "Category already exists!" }] });
+            return errorMessage(res, "Category already exists!", 400);
         }
 
         // save to DB
@@ -49,14 +41,13 @@ exports.addCategory = async (req, res) => {
             title,
             description,
             status,
-            dateCreated,
         });
         const addedCategory = await category.save({ new: true });
         console.log("addCategory= ", addedCategory)
         res.status(200).send("Successfully saved to DB");
 
     } catch (error) {
-        return res.status(500).json({ errors: error });
+        return errorMessage(res, error)
     }
 }
 
@@ -66,10 +57,8 @@ exports.updateCategory = async (req, res) => {
 
         // field validation
         const validationErr = validator.validationResult(req);
-        if (validationErr.errors.length > 0) {
-            return res
-                .status(400)
-                .json(validationErr);
+        if (validationErr.errors.length) {
+            return errorMessage(res, validationErr.errors, 400);
         };
 
         // update category
@@ -80,13 +69,13 @@ exports.updateCategory = async (req, res) => {
             description
         }, { new: true, runValidators: true });
         console.log("updatedCategory= ", updatedCategory);
-
+        if (!updatedCategory) {
+            return errorMessage(res, "wrong request!", 400)
+        }
         res.status(200).send("Category updated.");
 
     } catch (error) {
-        return res
-            .status(500)
-            .json({ errors: error });
+        return errorMessage(res, error);
     };
 };
 
@@ -98,9 +87,7 @@ exports.deleteCategory = async (req, res) => {
         });
         res.status(200).send(`Category ${req.params.id} deleted.`);
     } catch (error) {
-        return res
-            .status(500)
-            .json({ errors: error });
+        return errorMessage(res, error);
     };
 };
 
@@ -109,6 +96,6 @@ exports.destroyCategory = async (req, res) => {
         await Category.findByIdAndDelete(req.params.id);
         res.status(200).send("Category is completely deleted from DB");
     } catch (error) {
-        return res.status(500).json(error);
+        return errorMessage(res, error);
     }
 };

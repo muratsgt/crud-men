@@ -1,5 +1,5 @@
 const express = require("express");
-const connectDB = require("./models/dbConnect");
+const connectDB = require("./helper/dbConnect");
 const router = require("./routes/router");
 require("dotenv").config();
 

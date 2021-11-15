@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const validator = require("express-validator");
+const errorMessage = require("../helper/errorMessage");
 
 
 exports.getAllProducts = async (req, res) => {
@@ -7,7 +8,7 @@ exports.getAllProducts = async (req, res) => {
         const products = await Product.find();
         res.status(200).json(products);
     } catch (error) {
-        return res.status(500).json({ errors: error });
+        return errorMessage(res, error);
     };
 }
 
@@ -17,7 +18,7 @@ exports.getProduct = async (req, res) => {
         const product = await Product.findById(req.params.id).populate("category");
         res.status(200).json(product);
     } catch (error) {
-        return res.status(500).json({ errors: error });
+        return errorMessage(res, error);
     };
 }
 
@@ -29,8 +30,8 @@ exports.addProduct = async (req, res) => {
 
         // validation
         const validationRes = validator.validationResult(req);
-        if (validationRes.errors.length > 0) {
-            return res.status(400).json(validationRes);
+        if (validationRes.errors.length) {
+            return errorMessage(res, validationRes.errors, 400);
         };
 
         // save to DB
@@ -42,13 +43,13 @@ exports.addProduct = async (req, res) => {
             const savedProduct = await product.save({ new: true });
             console.log("ProductController.js ~ line 43 ~ savedProduct: ", savedProduct);
         } catch (error) {
-            return res.status(500).json(error);
+            return errorMessage(res, error);
         }
 
         res.send("Successfully saved to DB");
 
     } catch (error) {
-        return res.status(500).json(error);
+        return errorMessage(res, error);
     }
 }
 
@@ -60,8 +61,8 @@ exports.updateProduct = async (req, res) => {
 
         // validation
         validationRes = validator.validationResult(req);
-        if (validationRes.errors.length > 0) {
-            return res.status(400).json(validationRes);
+        if (validationRes.errors.length) {
+            return errorMessage(res, validationRes.errors, 400);
         };
 
         // find and update
@@ -74,7 +75,7 @@ exports.updateProduct = async (req, res) => {
         res.status(200).send("Successfully updated");
 
     } catch (error) {
-        return res.status(500).json(error);
+        return errorMessage(res, error);
     }
 }
 
@@ -86,7 +87,7 @@ exports.deleteProduct = async (req, res) => {
         });
         res.status(200).send(`Product id:${req.params.id} deleted`)
     } catch (error) {
-        return res.status(500).json({ errors: error })
+        return errorMessage(res, error);
     };
 }
 
@@ -96,6 +97,6 @@ exports.destroyProduct = async (req, res) => {
         await Product.findByIdAndDelete(req.params.id);
         res.status(200).send(`Product id:${req.params.id} deleted from DB`)
     } catch (error) {
-        return res.status(500).json({ errors: error })
+        return errorMessage(res, error);
     };
 }
